@@ -28,10 +28,11 @@ connection.connect(function (err) {
 
 function showStock() {
     connection.query("SELECT * FROM auction", function (err, res) {
-        for (var i = 0; i < res.length; i++) {
-            console.log(res[i].id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
-        }
-        console.log(console.table);
+        // for (var i = 0; i < res.length; i++) {
+        //     console.log(res[i].id + " | " + res[i].product_name + " | " + res[i].department_name + " | " + res[i].price + " | " + res[i].stock_quantity);
+        // }
+        console.table(res);
+        // console.log(console.table);
         runSearch();
     });
 }
@@ -61,25 +62,35 @@ function runSearch() {
 
 function purchaseItems(itemID, NumItems) {
 
-    connection.query("SELECT * From Auction WHERE id =  " + itemID, function (err, res) {
+    connection.query("SELECT * FROM auction WHERE id =  " + itemID, function (err, res) {
         if (err) throw err
-    
-console.log(NumItems,res[0].stock_quantity);
-    if (NumItems <= res[0].stock_quantity) {
-        
-        var totalAmount = res[0].price * NumItems;
-        var newQuantity = NumItems - res[0].stock_quantity;
 
-        console.log("Your Order is On its way!");
-        console.log("Total cost for " + NumItems + "  " + res[0].product_name + " is " + totalAmount + ". Thanks for buying with Bamazon!");
+        console.log(NumItems, res[0].stock_quantity);
+        if (NumItems <= res[0].stock_quantity) {
 
-        //add connection.query to include 
+            var totalAmount = res[0].price * NumItems;
+            var newQuantity = NumItems - res[0].stock_quantity;
 
-    } else {
-        console.log("Apologies. Our stock for " + res[0].product_name + " is insufficient for your order.");
-    };
-    showStock();
-});
+            console.log("Your Order is On its way!");
+            console.log("Total cost for " + NumItems + "  " + res[0].product_name + " is " + totalAmount + ". Thanks for buying with Bamazon!");
+
+            //add connection.query to include 
+
+            // write the update 
+            // to update the stock quantity of item being purchused 
+            // UPDATE auction
+            // SET stock_quantity = 47
+            // WHERE id = 1;
+
+            connection.query("UPDATE auction SET stock_quantity = newQuantity WHERE id = " + NumItems, function (err, res) {
+                if (err) throw err
+            });
+
+        } else {
+            console.log("Apologies. Our stock for " + res[0].product_name + " is insufficient for your order.");
+        }
+        showStock();
+    });
 };
 
 // runSearch();
