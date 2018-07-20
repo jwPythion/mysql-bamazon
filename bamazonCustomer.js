@@ -38,47 +38,51 @@ function showStock() {
 
 function runSearch() {
     inquirer
-        .prompt({
-            name: "itemID",
-            type: "list",
-            message: "What is the item ID of the product you'd like to purchase?",
-            choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
-        },
+        .prompt([
+            {
+                name: "itemID",
+                type: "list",
+                message: "What is the item ID of the product you'd like to purchase?",
+                choices: ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
+            },
             {
                 name: "NumberOfItems",
                 type: "input",
                 message: "How many would you like to purchase?",
                 default: "10"
-            })
+            }])
         .then(function (userInput) {
-            var NumItems = userInput.NumberofItems
+            var NumItems = userInput.NumberOfItems
             var ItemtoBuy = userInput.itemID
 
             purchaseItems(ItemtoBuy, NumItems);
         });
 };
 
-function purchaseItems(itemId, NumItems) {
+function purchaseItems(itemID, NumItems) {
 
-    connection.query("SELECT * From Auction WHERE item_id =  " + itemID, function (err, res) {
+    connection.query("SELECT * From Auction WHERE id =  " + itemID, function (err, res) {
         if (err) throw err
-    });
-
-    if (NumID <= res[0].stock_quantitiy) {
-
+    
+console.log(NumItems,res[0].stock_quantity);
+    if (NumItems <= res[0].stock_quantity) {
+        
         var totalAmount = res[0].price * NumItems;
+        var newQuantity = NumItems - res[0].stock_quantity;
 
         console.log("Your Order is On its way!");
         console.log("Total cost for " + NumItems + "  " + res[0].product_name + " is " + totalAmount + ". Thanks for buying with Bamazon!");
 
+        //add connection.query to include 
+
     } else {
         console.log("Apologies. Our stock for " + res[0].product_name + " is insufficient for your order.");
     };
-    runSearch();
-
+    showStock();
+});
 };
 
-runSearch();
+// runSearch();
 
 
 
